@@ -13,3 +13,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.fc-button-primary{
+  background-color: #385723 !important;
+}
+
+.fc-button-active{
+  border-color: #273b19 !important;
+  background-color: #273b19 !important;
+}

@@ -46,7 +46,8 @@ function Calendar() {
             title: "New Event",
             start: arg.start,
             end: arg.end,
-            allDay: arg.allDay
+            allDay: arg.allDay,
+            color: "#378006"
           }
         ]);
       }}

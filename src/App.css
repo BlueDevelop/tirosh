@@ -19,7 +19,7 @@
 #main > .calender {
   padding: 1em;
   flex: 1;
-  order: 1;
+  order: 2;
   /* background: teal; */
   margin-top: 1vh;
 }
@@ -46,4 +46,11 @@ header{
 
 footer, article, nav, aside {
   padding: 1em;
+}
+
+@media screen and (max-width: 1050px){
+  #main {
+    display: flex;
+    flex-direction: column;
+  }
 }
