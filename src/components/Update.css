@@ -17,6 +17,43 @@
     width: 10vw;
   }
 
+  .ul-update {
+    list-style-type: none;
+    padding: 5px;
+    margin: 0;
+    height: 400px;
+    overflow-y: scroll;
+  }
+  
+  .ul-update .li-update {
+    border: 1px solid #ddd;
+    margin-top: -1px; 
+    background-color: #f6f6f6;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 18px;
+    color: black;
+    display: block;
+    position: relative;
+    text-align: right;
+  }
+  
+  .ul-update .li-update:hover {
+    background-color: #92d050;
+  }
+  
+  .close {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    padding: 12px 16px;
+    transform: translate(0%, -50%);
+  }
+  
+  .close:hover {background: #385723;}
+
+
   /* Make it a marquee */
 .marquee {
   padding: 0.2em;
@@ -24,6 +61,7 @@
   white-space: nowrap;
   overflow: hidden;
   background: #92d050;
+  width: 100%;
 }
 
 .marquee span {

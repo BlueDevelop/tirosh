@@ -29,17 +29,17 @@ function Calendar() {
   const handleClick = async arg => {
     const { value: title } = await Swal.fire({
       input: "text",
-      inputPlaceholder: "Type your title here...",
+      inputPlaceholder: "בחר שם לאירוע...",
       showCancelButton: true,
       inputValidator: value => {
         if (!value) {
-          return "You need to write something!";
+          return "הקלד שם לאירוע כדי להמשיך...";
         }
       }
     });
 
     if (title) {
-      Swal.fire(`Your event is ${title}`);
+      Swal.fire(`האירוע הוא ${title}`);
       const event = {
         title: title,
         start: arg.start,
@@ -47,13 +47,12 @@ function Calendar() {
         allDay: arg.allDay,
         color: "#378006"
       };
-      console.log(event);
       const result = await axios.post("api/events", { event });
-      setEvents([...events, event]);
+      console.log(result);
+      setEvents([...events, result.data.event]);
     }
   };
   const handleEventClick = async event => {
-    console.log(event);
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: "btn btn-success",
@@ -64,13 +63,13 @@ function Calendar() {
 
     swalWithBootstrapButtons
       .fire({
-        title: "Are you sure?",
-        html: `Your event is ${event.event._def.title}`,
-        text: "You won't be able to revert this!",
+        title: "האם אתה בטוח?",
+        html: `האירוע הוא ${event.event._def.title}`,
+        text: "לא תוכל להתחרט!",
         type: "warning",
         showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel!",
+        confirmButtonText: "כן, מחק!",
+        cancelButtonText: "לא, בטל!",
         reverseButtons: true
       })
       .then(async result => {
@@ -83,8 +82,8 @@ function Calendar() {
             const newArray = events.filter(item => item._id !== valueToRemove);
             setEvents(newArray);
             swalWithBootstrapButtons.fire(
-              "Deleted!",
-              "Your file has been deleted.",
+              "נמחק!",
+              "האירוע נמחק בהצלחה",
               "success"
             );
           }
@@ -92,11 +91,7 @@ function Calendar() {
           // Read more about handling dismissals
           result.dismiss === Swal.DismissReason.cancel
         ) {
-          swalWithBootstrapButtons.fire(
-            "Cancelled",
-            "Your imaginary file is safe :)",
-            "error"
-          );
+          swalWithBootstrapButtons.fire("בוטל", "האירוע לא נמחק", "error");
         }
       });
   };
@@ -111,28 +106,6 @@ function Calendar() {
         right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
       }}
       plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-      //   dateClick={arg => {
-      //     setEvents([
-      //       ...events,
-      //       {
-      //         title: "New Event",
-      //         start: arg.date,
-      //         allDay: arg.allDay
-      //       }
-      //     ]);
-      //   }}
-      // select={arg => {
-      //   setEvents([
-      //     ...events,
-      //     {
-      //       title: "New Event",
-      //       start: arg.start,
-      //       end: arg.end,
-      //       allDay: arg.allDay,
-      //       color: "#378006"
-      //     }
-      //   ]);
-      // }}
       eventClick={handleEventClick}
       select={handleClick}
       buttonText={{

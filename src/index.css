@@ -22,3 +22,7 @@ code {
   border-color: #273b19 !important;
   background-color: #273b19 !important;
 }
+
+.swal2-container {
+  z-index: 20000 !important;
+}
