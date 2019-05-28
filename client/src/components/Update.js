@@ -3,13 +3,9 @@ import "./Update.css";
 import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Examples from "./Drawer";
-import Modal from "react-awesome-modal";
-import { Timeline, TimelineItem } from "vertical-timeline-component-for-react";
-import { AgGridReact } from "ag-grid-react";
 
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-material.css";
+import Modal from "react-awesome-modal";
+
 const MySwal = withReactContent(Swal);
 
 function Update() {
@@ -21,6 +17,9 @@ function Update() {
   }, []);
 
   const handleClick = async () => {
+    if (!localStorage.hasOwnProperty("user")) {
+      return;
+    }
     const { value: text } = await Swal.fire({
       input: "text",
       inputPlaceholder: "הקלד את העידכון כאן...",
@@ -41,6 +40,9 @@ function Update() {
     }
   };
   const handleRemoveUpdate = async update => {
+    if (!localStorage.hasOwnProperty("user")) {
+      return;
+    }
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: "btn btn-success",
@@ -82,6 +84,9 @@ function Update() {
       });
   };
   const openModal = () => {
+    if (!localStorage.hasOwnProperty("user")) {
+      return;
+    }
     setVisible(true);
   };
 

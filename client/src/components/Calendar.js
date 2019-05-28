@@ -7,6 +7,8 @@ import listPlugin from "@fullcalendar/list";
 import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import Tooltip from "tooltip.js";
+import Popup from "./popUp";
 
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
@@ -16,7 +18,33 @@ import "@fullcalendar/list/main.css";
 const MySwal = withReactContent(Swal);
 
 function Calendar() {
+  let Toast = {};
+  const eventMouseEnter = info => {
+    console.log("INFO");
+    console.log(info);
+    Toast = Swal.mixin({
+      toast: true,
+      showConfirmButton: false,
+      target: "FullCalendar",
+      position: "bottom",
+      animation: false,
+      padding: "2rem",
+      background: "#f7e6d2"
+    });
+    Toast.fire({
+      title: info.event.title
+    });
+  };
+
+  const eventMouseLeave = () => {
+    Toast.close();
+  };
+
   const [events, setEvents] = useState([]);
+  const [mouseEvents, setMouseEvents] = useState({
+    eventMouseEnter: eventMouseEnter,
+    eventMouseLeave: eventMouseLeave
+  });
 
   // call api to fetch events
   useEffect(async () => {
@@ -27,6 +55,9 @@ function Calendar() {
   }, []);
 
   const handleClick = async arg => {
+    if (!localStorage.hasOwnProperty("user")) {
+      return;
+    }
     const { value: title } = await Swal.fire({
       input: "text",
       inputPlaceholder: "בחר שם לאירוע...",
@@ -53,6 +84,13 @@ function Calendar() {
     }
   };
   const handleEventClick = async event => {
+    if (!localStorage.hasOwnProperty("user")) {
+      return;
+    }
+    setMouseEvents({
+      eventMouseEnter: undefined,
+      eventMouseLeave: undefined
+    });
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: "btn btn-success",
@@ -93,30 +131,42 @@ function Calendar() {
         ) {
           swalWithBootstrapButtons.fire("בוטל", "האירוע לא נמחק", "error");
         }
+        setMouseEvents({
+          eventMouseEnter: eventMouseEnter,
+          eventMouseLeave: eventMouseLeave
+        });
       });
   };
+
   return (
-    <FullCalendar
-      locale="he"
-      defaultView="dayGridMonth"
-      selectable={true}
-      header={{
-        left: "prev,next today",
-        center: "title",
-        right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
-      }}
-      plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-      eventClick={handleEventClick}
-      select={handleClick}
-      buttonText={{
-        today: "היום",
-        month: "חודש",
-        week: "שבוע",
-        day: "יום",
-        list: "רשימה"
-      }}
-      events={events}
-    />
+    <div>
+      {/* <Popup style={{}} content="edsfsdfsd" /> */}
+      <div id="theDiv" />
+      <FullCalendar
+        locale="he"
+        defaultView="dayGridMonth"
+        selectable={true}
+        header={{
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
+        }}
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+        eventClick={handleEventClick}
+        select={handleClick}
+        buttonText={{
+          today: "היום",
+          month: "חודש",
+          week: "שבוע",
+          day: "יום",
+          list: "רשימה"
+        }}
+        events={events}
+        eventMouseEnter={mouseEvents.eventMouseEnter}
+        eventMouseLeave={mouseEvents.eventMouseLeave}
+        eventLimit={true}
+      />
+    </div>
   );
 }
 
