@@ -8,7 +8,6 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Tooltip from "tooltip.js";
-import Popup from "./popUp";
 
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";

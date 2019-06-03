@@ -3,6 +3,7 @@ import "./App.css";
 import Update from "./components/Update";
 import Tasks from "./components/Tasks";
 import Calendar from "./components/Calendar";
+import SplashScreen from "./components/SplashScreen";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import axios from "axios";
@@ -10,6 +11,12 @@ import axios from "axios";
 const MySwal = withReactContent(Swal);
 
 function App() {
+  const [showSplashScreen, setshowSplashScreen] = useState(true);
+
+  setTimeout(() => {
+    setshowSplashScreen(false);
+  }, 5000);
+
   const login = async () => {
     const result = await Swal.mixin({
       input: "text",
@@ -33,7 +40,6 @@ function App() {
       };
       const returnUser = await axios.post("api/users/login", { user });
       if (returnUser) {
-        console.log(returnUser);
         setState({
           authButton: (
             <div className="slide-out-button">
@@ -126,6 +132,9 @@ function App() {
       </div>
     )
   });
+  
+  
+  if (showSplashScreen) return SplashScreen();
 
   return (
     <div className="App">
