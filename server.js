@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const errorHandler = require("errorhandler");
 const MongoClient = require("mongodb").MongoClient;
 const assert = require("assert");
+const fileUpload = require("express-fileupload");
 
 const striptags = require("striptags");
 const Entities = require("html-entities").AllHtmlEntities;
@@ -45,6 +46,13 @@ app.use(
 if (!isProduction) {
   app.use(errorHandler());
 }
+
+// Use for upload files
+app.use(fileUpload({
+  useTempFiles: true,
+  preserveExtension: true,
+  createParentPath: true
+}));
 
 //Configure Mongoose
 mongoose.connect("mongodb://localhost/tirosh");

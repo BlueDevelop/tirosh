@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./App.css";
 import Update from "./components/Update";
 import Tasks from "./components/Tasks";
+import Uploads from "./components/Uploads";
 import Calendar from "./components/Calendar";
 import SplashScreen from "./components/SplashScreen";
 import Swal from "sweetalert2";
@@ -143,6 +144,10 @@ function App() {
       <header>ברוכים הבאים לעמוד הבית של ניהול **** **** 2020</header>
       <Update />
       <div id="main">
+      {/* For Uploads files - inprogress
+        <div className="uploads">
+          <Uploads />
+        </div> */}
         <div className="tasks">
           <Tasks />
         </div>
