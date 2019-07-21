@@ -6,6 +6,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const errorHandler = require("errorhandler");
 const MongoClient = require("mongodb").MongoClient;
+const ObjectID = require("mongodb").ObjectID;
 const assert = require("assert");
 const fileUpload = require("express-fileupload");
 
@@ -18,6 +19,7 @@ const decodeEntities = entities.decode;
 const url = "mongodb://localhost:27017";
 // Database Name
 const dbName = "icu-dev";
+const projectId = "5bb9e79df82c0151fc0cd5c8";
 
 //Configure mongoose's promise to global promise
 mongoose.promise = global.Promise;
@@ -48,11 +50,13 @@ if (!isProduction) {
 }
 
 // Use for upload files
-app.use(fileUpload({
-  useTempFiles: true,
-  preserveExtension: true,
-  createParentPath: true
-}));
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    preserveExtension: true,
+    createParentPath: true
+  })
+);
 
 //Configure Mongoose
 mongoose.connect("mongodb://localhost/tirosh");
@@ -66,6 +70,10 @@ require("./models/Events");
 require("./config/passport");
 app.use(require("./routes"));
 
+app.get("/isalive", (req, res) => {
+  return res.status(200).send("alive");
+});
+
 app.get("/api/tasks", (req, res) => {
   const client = new MongoClient(url);
   client.connect(function(err) {
@@ -73,7 +81,14 @@ app.get("/api/tasks", (req, res) => {
     const db = client.db(dbName);
     const collection = db.collection("projects");
     const aggregation_array = [
-      { $match: {} },
+      {
+        $match: {
+          project: {
+            project: new ObjectID(projectId),
+            recycled: { $exists: false }
+          }
+        }
+      },
       {
         $lookup: {
           from: "users",
@@ -109,15 +124,13 @@ app.use(express.static(path.join(__dirname, "client/build")));
 
 //build mode
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+  return res.sendFile(path.join(__dirname, "client/build", "index.html"));
 });
 
 //Error handlers & middlewares
 if (!isProduction) {
-  app.use(function(err, req, res) {
-    res.status(err.status || 500);
-
-    res.json({
+  app.use(function(err, req, res, next) {
+    return res.status(err.status || 500).json({
       errors: {
         message: err.message,
         error: err
@@ -126,10 +139,8 @@ if (!isProduction) {
   });
 }
 
-app.use(function(err, req, res) {
-  res.status(err.status || 500);
-
-  res.json({
+app.use(function(err, req, res, next) {
+  return res.status(err.status || 500).res.json({
     errors: {
       message: err.message,
       error: {}
@@ -137,4 +148,4 @@ app.use(function(err, req, res) {
   });
 });
 
-app.listen(8000, () => console.log("Server running on http://localhost:8000/"));
+app.listen(5000, () => console.log("Server running on http://localhost:5000"));

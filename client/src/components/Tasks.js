@@ -62,11 +62,6 @@ function Tasks() {
             headerName: "תאריך יעד",
             field: "due",
             resizable: true
-          },
-          {
-            headerName: "תאריך יעד",
-            field: "due",
-            resizable: true
           }
         ]}
         rowData={tasks}

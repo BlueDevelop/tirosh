@@ -8,6 +8,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import Tooltip from "tooltip.js";
+//import Popup from "./popUp";
 
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
@@ -17,14 +18,12 @@ import "@fullcalendar/list/main.css";
 const MySwal = withReactContent(Swal);
 
 function Calendar() {
+  const [events, setEvents] = useState([]);
   let Toast = {};
   const eventMouseEnter = info => {
-    console.log("INFO");
-    console.log(info);
     Toast = Swal.mixin({
       toast: true,
       showConfirmButton: false,
-      target: "FullCalendar",
       position: "bottom",
       animation: false,
       padding: "2rem",
@@ -39,7 +38,6 @@ function Calendar() {
     Toast.close();
   };
 
-  const [events, setEvents] = useState([]);
   const [mouseEvents, setMouseEvents] = useState({
     eventMouseEnter: eventMouseEnter,
     eventMouseLeave: eventMouseLeave
@@ -138,34 +136,29 @@ function Calendar() {
   };
 
   return (
-    <div>
-      {/* <Popup style={{}} content="edsfsdfsd" /> */}
-      <div id="theDiv" />
-      <FullCalendar
-        locale="he"
-        defaultView="dayGridMonth"
-        selectable={true}
-        header={{
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
-        }}
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-        eventClick={handleEventClick}
-        select={handleClick}
-        buttonText={{
-          today: "היום",
-          month: "חודש",
-          week: "שבוע",
-          day: "יום",
-          list: "רשימה"
-        }}
-        events={events}
-        eventMouseEnter={mouseEvents.eventMouseEnter}
-        eventMouseLeave={mouseEvents.eventMouseLeave}
-        eventLimit={true}
-      />
-    </div>
+    <FullCalendar
+      locale="he"
+      defaultView="dayGridMonth"
+      selectable={true}
+      header={{
+        left: "prev,next today",
+        center: "title",
+        right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
+      }}
+      plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+      eventClick={handleEventClick}
+      select={handleClick}
+      buttonText={{
+        today: "היום",
+        month: "חודש",
+        week: "שבוע",
+        day: "יום",
+        list: "רשימה"
+      }}
+      eventMouseEnter={mouseEvents.eventMouseEnter}
+      eventMouseLeave={mouseEvents.eventMouseLeave}
+      events={events}
+    />
   );
 }
 

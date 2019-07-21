@@ -2,22 +2,19 @@ import React, { useState } from "react";
 import "./App.css";
 import Update from "./components/Update";
 import Tasks from "./components/Tasks";
-import Uploads from "./components/Uploads";
 import Calendar from "./components/Calendar";
-import SplashScreen from "./components/SplashScreen";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import axios from "axios";
+import SplashScreen from "./components/SplashScreen";
 
 const MySwal = withReactContent(Swal);
 
 function App() {
-  const [showSplashScreen, setshowSplashScreen] = useState(true);
-
+  const [showSplashScreen, setShowSplashScreen] = useState(true);
   setTimeout(() => {
-    setshowSplashScreen(false);
+    setShowSplashScreen(false);
   }, 5000);
-
   const login = async () => {
     const result = await Swal.mixin({
       input: "text",
@@ -41,6 +38,7 @@ function App() {
       };
       const returnUser = await axios.post("api/users/login", { user });
       if (returnUser) {
+        console.log(returnUser);
         setState({
           authButton: (
             <div className="slide-out-button">
@@ -100,6 +98,29 @@ function App() {
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = "Token " + user.user.token;
   }
+
+  const [showHI, setShowHi] = useState(false);
+  const styleHI = showHI
+    ? {
+        width: "20%",
+        height: "80%",
+        overflow: "hidden",
+        position: "absolute",
+        "z-index": "1",
+        display: "block"
+      }
+    : {
+        width: "20%",
+        height: "80%",
+        overflow: "hidden",
+        position: "absolute",
+        "z-index": "1",
+        display: "none"
+      };
+  const hi = async () => {
+    setShowHi(!showHI);
+  };
+
   const [state, setState] = useState({
     authButton: user ? (
       <div className="slide-out-button">
@@ -133,21 +154,44 @@ function App() {
       </div>
     )
   });
-  
-  
   if (showSplashScreen) return SplashScreen();
-
   return (
     <div className="App">
       {state.authButton}
+      <div className="slide-out-button-Hi">
+        <i className="icon">
+          <img id="Hi" src="Hi.png" onClick={hi} />
+        </i>
+      </div>
 
-      <header>ברוכים הבאים לעמוד הבית של ניהול **** **** 2020</header>
+      <header>
+        <div class="header-container">
+          <div class="welcome">
+            <img id="symbol" src="symbol.png" />
+            <p>ברוכים הבאים לעמוד הבית של ניהול **** **** 2020</p>
+            <img id="krypton" src="krypton.png" />
+          </div>
+          <div class="icu-link">
+            <a rel="noopener noreferrer" target="_blank" href="icu.url">
+              <img id="icu" srv="icu.png" />
+            </a>
+            <a rel="noopener noreferrer" target="_blank" href="momentum.url">
+              <img id="momentum" srv="momentum.png" />
+            </a>
+          </div>
+        </div>
+      </header>
+
       <Update />
       <div id="main">
-      {/* For Uploads files - inprogress
-        <div className="uploads">
-          <Uploads />
-        </div> */}
+        <iframe
+          id="chat-frame"
+          src="this.is.a.url.hi"
+          style={styleHI}
+          z-index="1"
+        >
+          &lt;br /&gt;
+        </iframe>
         <div className="tasks">
           <Tasks />
         </div>
