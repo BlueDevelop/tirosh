@@ -6,7 +6,7 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import moment from "moment";
 
-function Tasks() {
+function Tasks(user) {
   const [tasks, setTasks] = useState([]);
   // const [gridApi,setGridApi] = userState(null);
 

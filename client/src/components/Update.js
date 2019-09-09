@@ -8,7 +8,8 @@ import Modal from "react-awesome-modal";
 
 const MySwal = withReactContent(Swal);
 
-function Update() {
+function Update(props) {
+  const user = props.user;
   const [updates, setUpdates] = useState([]);
   const [visible, setVisible] = useState(false);
   useEffect(async () => {
@@ -17,7 +18,7 @@ function Update() {
   }, []);
 
   const handleClick = async () => {
-    if (!localStorage.hasOwnProperty("user")) {
+    if (user.role != 1) {
       return;
     }
     const { value: text } = await Swal.fire({
@@ -84,7 +85,7 @@ function Update() {
       });
   };
   const openModal = () => {
-    if (!localStorage.hasOwnProperty("user")) {
+    if (user.role != 1) {
       return;
     }
     setVisible(true);

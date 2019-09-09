@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const errorHandler = require("errorhandler");
@@ -9,11 +10,23 @@ const MongoClient = require("mongodb").MongoClient;
 const ObjectID = require("mongodb").ObjectID;
 const assert = require("assert");
 const fileUpload = require("express-fileupload");
+const passport = require("passport");
 
 const striptags = require("striptags");
 const Entities = require("html-entities").AllHtmlEntities;
 const entities = new Entities();
 const decodeEntities = entities.decode;
+
+//Models & routes
+require("./models/Users");
+require("./models/Updates");
+require("./models/Events");
+
+const authRouter = require("./routes/api/auth");
+const eventsRouter = require("./routes/api/events");
+const filesRouter = require("./routes/api/files");
+const updatesRouter = require("./routes/api/updates");
+const usersRouter = require("./routes/api/users");
 
 // Connection URL
 const url = "mongodb://localhost:27017";
@@ -30,18 +43,21 @@ const isProduction = process.env.NODE_ENV === "production";
 //Initiate our app
 const app = express();
 
+require("./config/passport");
+
 //Configure our app
 app.use(cors());
 app.use(require("morgan")("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   session({
-    secret: "passport-tutorial",
-    cookie: { maxAge: 60000 },
+    secret: "passport",
+    cookie: { maxAge: 7 * 24 * 60 * 60000 },
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: true
   })
 );
 
@@ -58,17 +74,23 @@ app.use(
   })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
 //Configure Mongoose
 mongoose.connect("mongodb://localhost/tirosh");
 
 //mongoose.set('debug', true);
 
-//Models & routes
-require("./models/Users");
-require("./models/Updates");
-require("./models/Events");
-require("./config/passport");
-app.use(require("./routes"));
+// app.use(require("./routes"));
+app.use("/api/auth", authRouter);
+app.use((req, res, next) => {
+  if (!req.user) res.redirect("/api/auth");
+  else next();
+});
+app.use("/api/events", eventsRouter);
+app.use("/api/files", filesRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/updates", updatesRouter);
 
 app.get("/isalive", (req, res) => {
   return res.status(200).send("alive");
@@ -79,14 +101,12 @@ app.get("/api/tasks", (req, res) => {
   client.connect(function(err) {
     assert.equal(null, err);
     const db = client.db(dbName);
-    const collection = db.collection("projects");
+    const collection = db.collection("tasks");
     const aggregation_array = [
       {
         $match: {
-          project: {
-            project: new ObjectID(projectId),
-            recycled: { $exists: false }
-          }
+          project: new ObjectID(projectId),
+          recycled: { $exists: false }
         }
       },
       {
@@ -103,7 +123,15 @@ app.get("/api/tasks", (req, res) => {
           title: 1,
           description: 1,
           due: 1,
-          assign: { $concat: ["$assign.name", "  ", "$assign.id"] },
+          assign: {
+            $concat: [
+              "$assign.name",
+              " ",
+              "$assign.lastname",
+              " ",
+              "$assign.id"
+            ]
+          },
           _id: 1
         }
       }
@@ -119,13 +147,27 @@ app.get("/api/tasks", (req, res) => {
     });
   });
 });
+
+// app.get("/", passport.authenticate("shraga"), function(req, res, next) {
+//   res.sendFile(path.join(__dirname, "client/build", "index.html"));
+// });
+
+// app.post("/auth/callback", passport.authenticate("shraga"), function(
+//   req,
+//   res,
+//   next
+// ) {
+//   //res.send(req.user);
+//   res.redirect("/");
+// });
 //Static file declaration
 app.use(express.static(path.join(__dirname, "client/build")));
 
 //build mode
-app.get("*", (req, res) => {
-  return res.sendFile(path.join(__dirname, "client/build", "index.html"));
-});
+// app.get("/", passport.authenticate("shraga"), (req, res) => {
+//   console.log("dddddd");
+//   return res.sendFile(path.join(__dirname, "client/build", "index.html"));
+// });
 
 //Error handlers & middlewares
 if (!isProduction) {

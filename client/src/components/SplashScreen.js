@@ -8,6 +8,6 @@ function splashScreen() {
     height: "90vh",
     overflow: "hidden"
   };
-  return <iframe style={style} src="this.is.a.url" />;
+  return <iframe style={style} src="" />;
 }
 export default splashScreen;
