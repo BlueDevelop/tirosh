@@ -5,9 +5,9 @@ const passport = require("passport");
 const Events = mongoose.model("Events");
 const axios = require("axios");
 
-const exchangeServiceApi = "http://localhost:3001";
-const tiroshEmail = "tirosh@tirosh.tirosh";
-let password = "123456";
+const exchangeServiceApi = process.env.EXCHANGE_SERVICE_API;
+const tiroshEmail = process.env.TIROSH_EMAIL;
+let password = process.env.PASSWORD;
 
 router.put("/", (req, res, next) => {
   const {
@@ -102,9 +102,7 @@ router.post("/", (req, res, next) => {
 router.get("/all", (req, res, next) => {
   const start = req.query.start;
   const end = req.query.end;
-  const email =
-    req.user.uniqueId.substring(0, req.user.uniqueId.indexOf("@")) +
-    "@tiroshEmail.com";
+  const email = req.user.uniqueId.substring(0, req.user.uniqueId.indexOf("@")) + process.env.DOMIN_EMAIL;
   const userEmail = req.query.tiroshEvents == "true" ? tiroshEmail : email;
   axios
     .get(exchangeServiceApi + "/api/appointments", {

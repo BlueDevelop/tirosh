@@ -4,7 +4,8 @@ const LocalStrategy = require("passport-local");
 const { Strategy } = require("passport-shraga");
 
 const Users = mongoose.model("Users");
-const admins = ["user1@example.com"];
+const admins = process.env.ADMINS.split(" ");
+console.log(admins);
 let users = [];
 // passport.use(new LocalStrategy({
 //   usernameField: 'user[email]',
@@ -30,7 +31,7 @@ passport.deserializeUser((id, cb) => {
 });
 
 passport.use(
-  new Strategy({ callbackURL: "/api/auth/callback" }, (profile, done) => {
+  new Strategy({ callbackURL: "/api/auth/callback", shragaURL: process.env.SHRAGA_URL }, (profile, done) => {
     Users.findOne({ uniqueId: profile.id }).then(user => {
       if (!user) {
         let userToSave = new Users({

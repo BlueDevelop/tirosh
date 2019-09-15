@@ -17,6 +17,8 @@ const Entities = require("html-entities").AllHtmlEntities;
 const entities = new Entities();
 const decodeEntities = entities.decode;
 
+require("dotenv").config();
+
 //Models & routes
 require("./models/Users");
 require("./models/Updates");
@@ -29,10 +31,10 @@ const updatesRouter = require("./routes/api/updates");
 const usersRouter = require("./routes/api/users");
 
 // Connection URL
-const url = "mongodb://localhost:27017";
+const url = process.env.DB_ICU;
 // Database Name
-const dbName = "icu-dev";
-const projectId = "5bb9e79df82c0151fc0cd5c8";
+const dbName = process.env.DB_ICU_NAME;
+const projectId = process.env.PROJECT_ID;
 
 //Configure mongoose's promise to global promise
 mongoose.promise = global.Promise;
@@ -77,7 +79,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 //Configure Mongoose
-mongoose.connect("mongodb://localhost/tirosh");
+mongoose.connect(process.env.DB_HOST);
 
 //mongoose.set('debug', true);
 
@@ -124,13 +126,7 @@ app.get("/api/tasks", (req, res) => {
           description: 1,
           due: 1,
           assign: {
-            $concat: [
-              "$assign.name",
-              " ",
-              "$assign.lastname",
-              " ",
-              "$assign.id"
-            ]
+            $concat: ["$assign.name", " ", "$assign.lastname", " ", "$assign.id"]
           },
           _id: 1
         }
@@ -190,4 +186,4 @@ app.use(function(err, req, res, next) {
   });
 });
 
-app.listen(5000, () => console.log("Server running on http://localhost:5000"));
+app.listen(process.env.PORT, () => console.log(`Server running on http://localhost:${process.env.PORT}`));

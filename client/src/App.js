@@ -13,6 +13,7 @@ const MySwal = withReactContent(Swal);
 function App() {
   const [showSplashScreen, setShowSplashScreen] = useState(true);
   const [user, setUser] = useState({});
+  const hiURL = process.env.HI_URL;
   setTimeout(() => {
     setShowSplashScreen(false);
   }, 5000);
